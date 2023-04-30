@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Gallery</title>
+  </head>
+  <body>
+    {% for image_file in image_files %}
+      <img src="{{ image_dir }}/{{ image_file }}" alt="{{ image_file }}">
+    {% endfor %}
+  </body>
+</html>
