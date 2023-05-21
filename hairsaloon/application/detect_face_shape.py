@@ -5,18 +5,20 @@ from sklearn.cluster import KMeans #for clustering
 
 def detection():
   #load the image
-  imagepath = "user_images/image.png"
-  face_cascade_path = "haarcascade_frontalface_default.xml"
-  predictor_path = "shape_predictor_68_face_landmarks.dat"
-
+  #imagepath = "user_images/image.png"
+  #face_cascade_path = "haarcascade_frontalface_default.xml"
+  #predictor_path = "shape_predictor_68_face_landmarks.dat"
   #create the haar cascade for detecting face and smile
-  faceCascade = cv2.CascadeClassifier(face_cascade_path)
-
+  #faceCascade = cv2.CascadeClassifier(face_cascade_path)
   #create the landmark predictor
-  predictor = dlib.shape_predictor(predictor_path)
+  #predictor = dlib.shape_predictor(predictor_path)
 
+  #create the haar cascade for detecting face and smile""
+  faceCascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
+  #create the landmark predictor
+  predictor = dlib.shape_predictor('shape_predictor_68_face_landmarks.dat')
   #read the image
-  image = cv2.imread(imagepath)
+  image = cv2.imread('user_images/image.png')
   #resizing the image to 000 cols nd 500 rows
   image = cv2.resize(image, (500, 500)) 
   #making another copy
@@ -37,7 +39,7 @@ def detection():
       flags=cv2.CASCADE_SCALE_IMAGE
       )
   #Detect faces in the image
-  print("found {0} faces!".format(len(faces)) )
+  print("found no faces!".format(len(faces)) )
 
   for (x,y,w,h) in faces:
       #draw a rectangle around the faces

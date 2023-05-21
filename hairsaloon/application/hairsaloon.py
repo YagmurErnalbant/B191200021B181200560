@@ -181,22 +181,17 @@ def submit():
 
 @app.route('/save_user', methods=['POST'])
 def save_user():
-    faceshape = detect_face_shape.detection()
-    gender = request.form.get('gender')
-    age = request.form.get('age')
-
     # Get the uploaded image
     image = request.files['image']
-
+    image.save('user_images/image.png')
+    gender = request.form.get('gender')
+    age = request.form.get('age')
+    faceshape = detect_face_shape.detection()
     # Construct the path to the image directory
-    image_dir = f"C:\\Users\\yagmu\\OneDrive\\Masaüstü\\hairsaloon\\gallery\\{gender}\\{age}\\{faceshape}"
+    image_dir = fr"static\{gender}\{age}\{faceshape}.csv"
 
-    # Get a list of all image files in the directory
-    image_files = [f for f in os.listdir(image_dir) if f.endswith('.jpg') or f.endswith('.png')]
-
-    return render_template('result.html', image_dir=image_dir, image_files=image_files)
-
-
+    df = pd.read_csv(image_dir)
+    return render_template('result.html', image_dir=image_dir, name=session['user_name'], faceshape=faceshape, df=df)
 
 @app.route('/logout')
 def logout():

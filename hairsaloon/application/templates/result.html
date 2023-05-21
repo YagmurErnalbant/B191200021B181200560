@@ -1,11 +1,69 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
   <head>
-    <title>Gallery</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+
+    <style>
+      .top-right {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+      }
+      
+      .table-container {
+        position: relative;
+      }
+      
+      .logout-btn {
+        margin-bottom: 10px;
+      }
+      
+      .image-container {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+      }
+      
+      .image-container img {
+        width: 30%;
+        height: auto;
+        transition: transform 0.3s ease;
+      }
+      
+      .image-container img:hover {
+        transform: scale(1.1);
+      }
+    </style>
+
+    <title>Hairsaloon</title>
   </head>
-  <body>
-    {% for image_file in image_files %}
-      <img src="{{ image_dir }}/{{ image_file }}" alt="{{ image_file }}">
-    {% endfor %}
-  </body>
-</html>
+  <body style="background: url('https://listelist.com/wp-content/uploads/2020/04/iStock-10245774041.jpg') no-repeat fixed; background-size: cover;">
+    <div class="container mt-5">
+      <div class="text-right logout-btn">
+        <a href="/submit" class="btn btn-primary btn-sm">Try another</a>
+        <a href="/logout" class="btn btn-secondary btn-sm">Log Out</a>
+      </div>
+      <h1>Welcome, {{ name }}!</h1>
+      <p>Your face shape is {{ faceshape }}, here are the hairstyles suitable for you:</p>
+      <div class="table-container">
+        <div class="image-container">
+          {% for index, row in df.iterrows() %}
+            <img src="{{ row.hairstyle }}">
+            {% if (index + 1) % 3 == 0 %}
+              </div><div class="image-container">
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.16.0/dist/umd/popper.min.js" integrity="sha384-tZC+AfDf3jJ5I5+jxdGpfKLJZ9JnXx2KeI/yEQ7V
+
