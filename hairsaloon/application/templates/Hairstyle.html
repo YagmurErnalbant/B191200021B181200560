@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+
+    <style>
+        .top-right {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+        
+        .table-container {
+            position: relative;
+        }
+        
+        .logout-btn {
+            margin-bottom: 10px;
+        }
+        
+        .image-container {
+            text-align: center;
+            margin-top: 100px;
+        }
+        
+        .image-container img {
+            width: 300px;
+            height: auto;
+            transition: transform 0.3s ease;
+            cursor: pointer;  /* Add this line to change the cursor to a pointer */
+        }
+        
+        .image-container img:hover {
+            transform: scale(1.1);
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .overlay img {
+            width: 600px;
+            height: auto;
+            cursor: pointer;
+        }
+        
+        
+        .overlay:target {
+            display: flex;
+        }
+        
+        .overlay:target img {
+            cursor: zoom-out;
+        }
+        
+        /* Additional Styles */
+        body {
+            background: url('https://listelist.com/wp-content/uploads/2020/04/iStock-10245774041.jpg') no-repeat fixed;
+            background-size: cover;
+        }
+        
+        h1 {
+            text-align: left;
+            margin-left: 20px;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="text-right logout-btn">
+            <a href="/submit" class="btn btn-primary btn-sm">Try another profile</a>
+            <a href="/result" class="btn btn-primary btn-sm">Try another hairstyle</a>
+            <a href="/logout" class="btn btn-secondary btn-sm">Log Out</a>
+        </div>
+        <div class="image-container">
+            <a href="#popup">
+                <img src="data:image/jpg;base64,{{ image_base64 }}" alt="Processed Image">
+            </a>
+        </div>
+        <div id="popup" class="overlay" onclick="closeOverlay(event)">
+            <img src="data:image/jpg;base64,{{ image_base64 }}" alt="Processed Image">
+        </div>
+    </div>
+
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.16.0/dist/umd/popper.min.js" integrity="sha384-tZC+AfDf3jJ5I5+jxdGpfKLJZ9JnXx2KeI/yEQ7V"></script>
+
+    <script>
+        function closeOverlay(event) {
+            if (event.target.id === "popup") {
+                location.href = "#";
+            }
+        }
+    </script>
+</body>
+</html>

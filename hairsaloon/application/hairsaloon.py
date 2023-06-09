@@ -3,8 +3,13 @@ import subprocess
 import pandas as pd
 import pyodbc
 import os
+import cv2
 import detect_face_shape
 from PIL import Image
+import numpy as np
+import dlib
+import urllib.request
+import base64
 
 #!! B191200021 B181200560
 #!! You need to install http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2 and place in the main folder alongside haar cascade.
@@ -76,99 +81,17 @@ def login():
 
         # If a match is found, log the user in
         if user:
-            # Check if the user is an admin
-            if user[1] == 'admin':
-                session['authenticated'] = True
-                session['user_id'] = user[0]
-                session['user_name'] = user[1]
-                # Redirect the admin to the admin page
-                return redirect('/admin')
-            else:
-                # Set session variables for a regular user
-                session['user_id'] = user[0]
-                session['user_name'] = user[1]
-                session['authenticated'] = True
-                return redirect('/submit')
+            # Set session variables for the user
+            session['user_id'] = user[0]
+            session['user_name'] = user[1]
+            session['authenticated'] = True
+            return redirect('/submit')
 
         else:
             return render_template('login.html', error='Invalid email or password')
     else:
         # Render the login template
         return render_template('login.html')
-
-@app.route('/admin')
-def admin():
-    # Check if the user is authenticated and has the admin role
-    if 'authenticated' in session and session['authenticated'] and session['user_name'] == 'admin':
-        # Connect to the database and retrieve a list of all registered users
-        # Replace 'database_name' and 'table_name' with the actual names of your database and table
-
-        cursor.execute('SELECT * FROM users')
-        users = cursor.fetchall()
-
-        # Render the admin template with the list of users
-        return render_template('admin.html', users=users)
-    else:
-        # User is not authenticated or does not have the admin role, redirect to the button page
-        return redirect('/login')
-
-@app.route('/add', methods=['POST'])
-def add_user():
-    # Check if the user is authenticated and has the admin role
-    if 'authenticated' in session and session['authenticated'] and session['user_name'] == 'admin':
-        # Retrieve the form data
-        name = request.form['name']
-        email = request.form['email']
-        password = request.form['password']
-
-        # Insert the new user into the database
-        query = 'INSERT INTO users (name, email, password) VALUES (?, ?, ?)'
-        cursor.execute(query, (name, email, password))
-        cnxn.commit()
-
-        # Redirect the admin back to the admin page
-        return redirect('/admin')
-    else:
-        # User is not authenticated or does not have the admin role, redirect to the button page
-        return redirect('/login')
-
-@app.route('/delete', methods=['POST'])
-def delete(email):
-    # Check if the user is authenticated and has the admin role
-    if 'authenticated' in session and session['authenticated'] and session['user_name'] == 'admin':
-        # Retrieve the form data
-        name = request.form['name']
-        email = request.form['email']
-        password = request.form['password']
-
-        cursor.execute('DELETE FROM users WHERE name = ?, email = ?, password = ?')
-        cnxn.commit()
-
-        # Redirect to the admin dashboard
-        return redirect('/admin')
-    else:
-        # User is not authenticated or does not have the admin role, redirect to the button page
-        return redirect('/login')
-
-@app.route('/update', methods=['POST'])
-def update():
-    # Check if the user is authenticated and has the admin role
-    if 'authenticated' in session and session['authenticated'] and session['user_name'] == 'admin':
-        # Retrieve the form data
-        email = request.form['email']
-        name = request.form['name']
-        password = request.form['password']
-
-        # Update the user's name and password in the database using their email as the identifier
-        query = 'UPDATE users SET name = ?, password = ? WHERE email = ?'
-        cursor.execute(query, (name, password, email))
-        cnxn.commit()
-
-        # Redirect the admin to the admin page
-        return redirect('/admin')
-    else:
-        # User is not authenticated or does not have the admin role, redirect to the button page
-        return redirect('/login')
 
 @app.route('/submit', methods=['GET', 'POST'])
 def submit():
@@ -178,20 +101,72 @@ def submit():
     else:
         # User is not authenticated, redirect to the login page
         return redirect('/login')
-
+    
 @app.route('/save_user', methods=['POST'])
 def save_user():
     # Get the uploaded image
     image = request.files['image']
-    image.save('user_images/image.png')
-    gender = request.form.get('gender')
-    age = request.form.get('age')
-    faceshape = detect_face_shape.detection()
+    image.save('hairsaloon/user_images/image.png')
+    session['gender'] = request.form.get('gender')
+    session['age'] = request.form.get('age')
+    session['faceshape'] = detect_face_shape.detection()  # Assuming detect_face_shape.detection() returns the face shape
     # Construct the path to the image directory
-    image_dir = fr"static\{gender}\{age}\{faceshape}.csv"
+    image_dir = fr"hairsaloon/static/{session['gender']}/{session['age']}/{session['faceshape']}.csv"
 
     df = pd.read_csv(image_dir)
-    return render_template('result.html', image_dir=image_dir, name=session['user_name'], faceshape=faceshape, df=df)
+    return render_template('result.html', image_dir=image_dir, name=session['user_name'], faceshape=session['faceshape'], df=df)
+
+@app.route('/choose_image', methods=['POST'])
+def choose_image():
+  row_number = int(request.form['row_number'])
+  filepath =('hairsaloon/user_images/image1.png')
+  image = ('hairsaloon/user_images/image.png')
+  image_dir = fr"hairsaloon/static/{session['gender']}/{session['age']}/{session['faceshape']}.csv"
+  df = pd.read_csv(image_dir)
+  image_dir = df.iloc[row_number]['hairstyle']
+  urllib.request.urlretrieve(image_dir, filepath)
+  # Load the input images
+  image1 = cv2.imread(filepath)
+  image2 = cv2.imread(image)
+  # Convert the images to grayscale
+  gray1 = cv2.cvtColor(image1, cv2.COLOR_BGR2GRAY)
+  gray2 = cv2.cvtColor(image2, cv2.COLOR_BGR2GRAY)
+  # Load the pre-trained face detector and landmark predictor from dlib
+  detector = dlib.get_frontal_face_detector()
+  predictor = dlib.shape_predictor('hairsaloon/shape_predictor_68_face_landmarks.dat')
+  # Detect faces and landmarks in the images
+  faces1 = detector(gray1)
+  faces2 = detector(gray2)
+  # Make sure that exactly one face is detected in each image
+  if len(faces1) != 1 or len(faces2) != 1:
+      print("Error: Exactly one face should be detected in each image.")
+      exit()
+  # Extract the facial landmarks for the first face
+  landmarks1 = predictor(gray1, faces1[0])
+  landmarks1 = np.array([(p.x, p.y) for p in landmarks1.parts()])
+  # Extract the facial landmarks for the second face
+  landmarks2 = predictor(gray2, faces2[0])
+  landmarks2 = np.array([(p.x, p.y) for p in landmarks2.parts()])
+  # Calculate the affine transformation matrix for the faces alignment
+  transformation_matrix = cv2.estimateAffinePartial2D(landmarks2, landmarks1)[0]
+  # Apply the affine transformation to the second face
+  face2_aligned = cv2.warpAffine(image2, transformation_matrix, (image1.shape[1], image1.shape[0]), flags=cv2.INTER_LINEAR, borderMode=cv2.BORDER_REFLECT)
+  # Swap the faces while preserving the hairstyle
+  image_swapped = image1.copy()
+  image_swapped[faces1[0].top():faces1[0].bottom(), faces1[0].left():faces1[0].right()] = face2_aligned[faces1[0].top():faces1[0].bottom(), faces1[0].left():faces1[0].right()]
+  # Save the processed images
+  cv2.imwrite('hairsaloon/processed/proccessed_image.jpg', image_swapped) 
+  _, img_encoded = cv2.imencode('.jpg', image_swapped)
+  image_base64 = base64.b64encode(img_encoded).decode('utf-8')
+  print("Faces saved as 'processed_image.jpg'")
+  return render_template('Hairstyle.html', image_base64=image_base64)
+
+@app.route('/result')
+def result():
+
+    image_dir = fr"hairsaloon/static/{session['gender']}/{session['age']}/{session['faceshape']}.csv"
+    df = pd.read_csv(image_dir)
+    return render_template('result.html', image_dir=image_dir, name=session['user_name'], faceshape=session['faceshape'], df=df)
 
 @app.route('/logout')
 def logout():

@@ -1,12 +1,15 @@
 import numpy as np #for mathematical calculations
 import cv2 #for face detection and other image operations
 import dlib #for detection of facial landmarks ex:nose,jawline,eyes
+import os
 from sklearn.cluster import KMeans #for clustering
+import math
+from math import degrees
 
 def detection():
   #load the image
   #imagepath = "user_images/image.png"
-  #face_cascade_path = "haarcascade_frontalface_default.xml"
+  #face_cascade_path = "haarcasca de_frontalface_default.xml"
   #predictor_path = "shape_predictor_68_face_landmarks.dat"
   #create the haar cascade for detecting face and smile
   #faceCascade = cv2.CascadeClassifier(face_cascade_path)
@@ -14,11 +17,11 @@ def detection():
   #predictor = dlib.shape_predictor(predictor_path)
 
   #create the haar cascade for detecting face and smile""
-  faceCascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
+  faceCascade = cv2.CascadeClassifier('hairsaloon/haarcascade_frontalface_default.xml')
   #create the landmark predictor
-  predictor = dlib.shape_predictor('shape_predictor_68_face_landmarks.dat')
+  predictor = dlib.shape_predictor('hairsaloon/shape_predictor_68_face_landmarks.dat')
   #read the image
-  image = cv2.imread('user_images/image.png')
+  image = cv2.imread('hairsaloon/user_images/image.png')
   #resizing the image to 000 cols nd 500 rows
   image = cv2.resize(image, (500, 500)) 
   #making another copy
@@ -146,8 +149,7 @@ def detection():
   bx,by = landmarks[4,0],landmarks[4,1]
   cx,cy = landmarks[5,0],landmarks[5,1]
   dx,dy = landmarks[6,0],landmarks[6,1]
-  import math
-  from math import degrees
+
   alpha0 = math.atan2(cy-ay,cx-ax)
   alpha1 = math.atan2(dy-by,dx-bx)
   alpha = alpha1-alpha0
