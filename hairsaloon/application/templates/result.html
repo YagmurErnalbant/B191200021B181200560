@@ -50,7 +50,7 @@
         <a href="/logout" class="btn btn-secondary btn-sm">Log Out</a>
     </div>
     <h1>Welcome, {{ name }}!</h1>
-    <p>Your face shape is {{ faceshape }}, here are the hairstyles suitable for you:</p>
+    <p>Your face shape is {{ faceshape }}, here are the hairstyles suitable for you. Click on one to try it out!:</p>
      <div class="table-container">
        <div class="image-container">
            {% for index, row in df.iterrows() %}

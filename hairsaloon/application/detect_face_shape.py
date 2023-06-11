@@ -7,14 +7,6 @@ import math
 from math import degrees
 
 def detection():
-  #load the image
-  #imagepath = "user_images/image.png"
-  #face_cascade_path = "haarcasca de_frontalface_default.xml"
-  #predictor_path = "shape_predictor_68_face_landmarks.dat"
-  #create the haar cascade for detecting face and smile
-  #faceCascade = cv2.CascadeClassifier(face_cascade_path)
-  #create the landmark predictor
-  #predictor = dlib.shape_predictor(predictor_path)
 
   #create the haar cascade for detecting face and smile""
   faceCascade = cv2.CascadeClassifier('hairsaloon/haarcascade_frontalface_default.xml')
@@ -42,7 +34,7 @@ def detection():
       flags=cv2.CASCADE_SCALE_IMAGE
       )
   #Detect faces in the image
-  print("found no faces!".format(len(faces)) )
+  print("found {0} faces!".format(len(faces)) )
 
   for (x,y,w,h) in faces:
       #draw a rectangle around the faces
@@ -68,10 +60,10 @@ def detection():
       forehead = temp[y:y+int(0.25*h), x:x+w]
       rows,cols, bands = forehead.shape
       X = forehead.reshape(rows*cols,bands)
-      """
-      Applying kmeans clustering algorithm for forehead with 2 clusters 
-      this clustering differentiates between hair and skin (thats why 2 clusters)
-      """
+      
+      #Applying kmeans clustering algorithm for forehead with 2 clusters 
+      #this clustering differentiates between hair and skin (thats why 2 clusters)
+      
       #kmeans
       kmeans = KMeans(n_clusters=2,init='k-means++',max_iter=300,n_init=10, random_state=0)
       y_kmeans = kmeans.fit_predict(X)

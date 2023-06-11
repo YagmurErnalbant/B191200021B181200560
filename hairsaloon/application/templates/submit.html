@@ -55,7 +55,6 @@
 			margin-bottom: 2%;
 		}
 	</style>
-	<link rel="stylesheet" href="https://unpkg.com/cropperjs/dist/cropper.css">
 </head>
 <body>
 	<h1>User Information Form</h1>
@@ -76,69 +75,7 @@
 		<label for="image">Upload an Image:</label>
 		<input type="file" id="image" name="image">
 
-		<input type="hidden" id="croppedImage" name="croppedImage">
-		<input type="hidden" id="cropX" name="cropX">
-		<input type="hidden" id="cropY" name="cropY">
-		<input type="hidden" id="cropWidth" name="cropWidth">
-		<input type="hidden" id="cropHeight" name="cropHeight">
-
-		<img id="previewImage" src="" alt="Preview Image">
-
 		<input type="submit" value="Submit">
 	</form>
-
-	<script src="https://unpkg.com/cropperjs/dist/cropper.js"></script>
-	<script>
-		document.getElementById('image').addEventListener('change', function(event) {
-			var input = event.target;
-			var reader = new FileReader();
-
-			reader.onload = function(){
-				var img = document.getElementById('previewImage');
-				img.src = reader.result;
-
-				// Initialize Cropper.js
-				var cropper = new Cropper(img, {
-					aspectRatio: 1, // Set the aspect ratio you desire
-					viewMode: 1, // Set the cropping area mode (0: free, 1: restricted, 2: square)
-					// Add more options if needed
-					crop: function(event) {
-						document.getElementById('cropX').value = event.detail.x;
-						document.getElementById('cropY').value = event.detail.y;
-						document.getElementById('cropWidth').value = event.detail.width;
-						document.getElementById('cropHeight').value = event.detail.height;
-					}
-				});
-			};
-
-			reader.readAsDataURL(input.files[0]);
-		});
-
-		function validateForm() {
-			var cropper = document.getElementById('previewImage').cropper;
-			if (cropper) {
-				// Get the cropped canvas data
-				var croppedCanvas = cropper.getCroppedCanvas();
-				if (croppedCanvas) {
-					// Convert the cropped canvas to a base64 encoded URL
-					var croppedImage = croppedCanvas.toDataURL('image/jpeg');
-
-					// Set the cropped image data in the hidden input field
-					document.getElementById('croppedImage').value = croppedImage;
-
-					// Return true to submit the form
-					return true;
-				} else {
-					// No crop data available, show an error message or handle it as desired
-					alert('Please crop the image before submitting the form.');
-					return false;
-				}
-			} else {
-				// Cropper instance not found, show an error message or handle it as desired
-				alert('Image is not selected or not loaded properly.');
-				return false;
-			}
-		}
-	</script>
 </body>
 </html>
